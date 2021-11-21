@@ -6,7 +6,9 @@ import (
 	"math/rand"
 	"time"
 
+	protoMessages "github.com/lucasmls/rabbitmq-poc/proto"
 	"github.com/streadway/amqp"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -35,7 +37,17 @@ func main() {
 	}
 
 	for {
-		newUserPayload := fmt.Sprintf("lucas-%d@gmail.com", rand.Intn(100))
+		newUserMessage := &protoMessages.NewUser{
+			User: &protoMessages.User{
+				Id:    rand.Uint32() % 1000,
+				Email: fmt.Sprintf("lucas-%d@gmail.com", rand.Intn(100)),
+			},
+		}
+
+		newUserPayload, err := proto.Marshal(newUserMessage)
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		err = amqpChannel.Publish(
 			"",
@@ -44,7 +56,7 @@ func main() {
 			false,
 			amqp.Publishing{
 				ContentType: "text/plain",
-				Body:        []byte(newUserPayload),
+				Body:        newUserPayload,
 			},
 		)
 		if err != nil {
