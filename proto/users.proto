@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "github.com/lucasmls/rabbitmq/proto_messages";
+
+package grpc;
+
+message User {
+  uint32 id = 1;
+  string email = 2;
+}
+
+message NewUser {
+  User user = 1;
+}
