@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	protoMessages "github.com/lucasmls/rabbitmq-poc/proto"
 	"github.com/streadway/amqp"
+	"google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -46,6 +48,12 @@ func main() {
 	}
 
 	for message := range messages {
-		fmt.Printf("Received a new message, content: %s \n", message.Body)
+		msg := &protoMessages.NewUser{}
+		err := proto.Unmarshal(message.Body, msg)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(msg)
 	}
 }
