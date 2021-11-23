@@ -25,8 +25,8 @@ func main() {
 	}
 
 	newUsersQueue, err := amqpChannel.QueueDeclare(
-		"new-users",
-		false,
+		"new_users",
+		true,
 		false,
 		false,
 		false,
