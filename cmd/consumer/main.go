@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
+	"time"
 
 	protoMessages "github.com/lucasmls/rabbitmq-poc/proto"
 	"github.com/streadway/amqp"
@@ -37,7 +39,7 @@ func main() {
 	messages, err := amqpChannel.Consume(
 		newUsersQueue.Name,
 		"",
-		true,
+		false,
 		false,
 		false,
 		false,
@@ -48,12 +50,14 @@ func main() {
 	}
 
 	for message := range messages {
-		msg := &protoMessages.NewUser{}
-		err := proto.Unmarshal(message.Body, msg)
+		newUserMessage := &protoMessages.NewUser{}
+		err := proto.Unmarshal(message.Body, newUserMessage)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Println(msg)
+		fmt.Println(newUserMessage)
+		message.Ack(false)
+		time.Sleep(time.Duration(rand.Uint32()) % 3 * time.Second)
 	}
 }
