@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"time"
 
 	protoMessages "github.com/lucasmls/rabbitmq-poc/proto"
@@ -20,6 +19,11 @@ func main() {
 	defer ampqConnection.Close()
 
 	amqpChannel, err := ampqConnection.Channel()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = amqpChannel.Qos(1, 0, false)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,6 +62,6 @@ func main() {
 
 		fmt.Println(newUserMessage)
 		message.Ack(false)
-		time.Sleep(time.Duration(rand.Uint32()) % 3 * time.Second)
+		time.Sleep(time.Second * 3)
 	}
 }
