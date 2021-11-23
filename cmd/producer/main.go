@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"time"
 
 	protoMessages "github.com/lucasmls/rabbitmq-poc/proto"
@@ -36,13 +35,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	newUsersCount := 1
 	for {
 		newUserMessage := &protoMessages.NewUser{
 			User: &protoMessages.User{
-				Id:    rand.Uint32() % 1000,
-				Email: fmt.Sprintf("lucas-%d@gmail.com", rand.Intn(100)),
+				Id:    uint32(newUsersCount),
+				Email: fmt.Sprintf("lucas-%d@gmail.com", uint32(newUsersCount)),
 			},
 		}
+
+		newUsersCount += 1
 
 		newUserPayload, err := proto.Marshal(newUserMessage)
 		if err != nil {
@@ -55,8 +57,9 @@ func main() {
 			false,
 			false,
 			amqp.Publishing{
-				ContentType: "text/plain",
-				Body:        newUserPayload,
+				DeliveryMode: amqp.Persistent,
+				ContentType:  "text/plain",
+				Body:         newUserPayload,
 			},
 		)
 		if err != nil {
