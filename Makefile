@@ -15,6 +15,24 @@ wq-consumer:
 	@ echo
 	@ go run ./cmd/workqueue/consumer/main.go
 
+ps-producer:
+	@ echo
+	@ echo "Starting PubSub producer..."
+	@ echo
+	@ go run ./cmd/pubsub/producer/main.go
+
+ps-first-consumer:
+	@ echo
+	@ echo "Starting PubSub consumer..."
+	@ echo
+	@ go run ./cmd/pubsub/consumer/main.go
+
+ps-second-consumer:
+	@ echo
+	@ echo "Starting PubSub consumer..."
+	@ echo
+	@ go run ./cmd/pubsub/consumer/main.go > consumer_logs.log
+
 gen-proto:
 	@ echo "Generating proto files..."
 	@ protoc \
